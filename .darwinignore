@@ -1,0 +1,9 @@
+.venv
+.uv
+__pycache__
+.git
+node_modules
+README.md
+uv.lock
+.gitignore
+memory.db

@@ -68,49 +68,10 @@ def inspect(path: str = typer.Argument(".", help="Ruta a inspeccionar")):
         else:
             console.print(f"📄 {f}")
 
-# Connect Parser with Graph Manager
-# Lógica conceptual para tu comando de indexación
-def index_project(path: str):
-    memory = MemoryManager()
-    reader = CodeReader(path)
-    files = reader.list_files()
+from commands import index_project, analyze
 
-    for file in files:
-        if file.endswith(".py"):
-            content = reader.read_file(file)
-            structure = get_code_structure(content)
-            
-            # Registrar el archivo como nodo
-            memory.graph.add_node(file, type="file")
-            
-            # Registrar imports como relaciones
-            for imp in structure["imports"]:
-                # Aquí simplificaremos: si el import menciona otro archivo del repo
-                for target_file in files:
-                    if target_file.replace(".py", "") in imp:
-                        memory.add_relationship(file, target_file, "imports")
-    
-    memory.save_to_disk()
-    return memory
-
-from memory.graph_manager import MemoryManager
-
-@app.command()
-def analyze(file: str):
-    """
-    Analiza qué archivos se verían afectados si cambias el archivo dado.
-    """
-    memory = MemoryManager()
-    memory.load_from_disk()
-    
-    related = memory.get_related_nodes(file)
-    
-    if not related:
-        console.print(f"[yellow]No se encontraron dependencias para {file}[/yellow]")
-    else:
-        console.print(f"[bold green]Si cambias {file}, podrías afectar a:[/bold green]")
-        for item in related:
-            console.print(f"🔗 {item}")
+app.command(name="index")(index_project)
+app.command(name="analyze")(analyze)
 
 if __name__ == "__main__":
     app()

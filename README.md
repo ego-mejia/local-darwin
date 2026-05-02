@@ -76,6 +76,15 @@ Primero, instalemos NetworkX con uv:
 
 #### para probar
 
+Una vez que guardes los cambios en main.py, ejecuta la indexación para que lea tus archivos y cree las conexiones en memory.db:
+
+```
+uv run main.py index .
+
+```
+
+Finalmente, ejecuta tu test de la memoria nuevamente:
+
 ```
 uv run main.py analyze main.py
 
