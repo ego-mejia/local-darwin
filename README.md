@@ -52,3 +52,11 @@ En esta fase vamos a darle la capacidad de explorar tu sistema de archivos y, lo
 ¿Qué es el AST?
 
 En lugar de ver el código como una cadena de texto, el AST convierte el código en un árbol jerárquico. Esto nos permite saber exactamente dónde empieza una función, qué argumentos recibe y qué otras librerías importa, de forma estructurada.
+
+## Para probar el codigo:
+
+```
+(local-agent) (base) ➜  local-agent git:(feat/Fase-2/File-system-and-parsing) ✗ uv run main.py inspect test
+Archivos encontrados en test:
+📄 archivo_1.py -> Clases: [], Funciones: []
+```

@@ -3,6 +3,10 @@ from openai import OpenAI
 from rich.console import Console
 from rich.panel import Panel
 
+# Importa CodeReader y get_code_structure en main.py.
+from tools.reader import CodeReader
+from tools.parser import get_code_structure
+
 # Configuración inicial
 app = typer.Typer(help="Agente de Coding Local - Fase 1")
 console = Console()
@@ -46,6 +50,23 @@ def chat(
     except Exception as e:
         console.print(f"[bold red]Error conectando con el modelo:[/bold red] {e}")
         console.print("[yellow]Asegúrate de que Ollama esté corriendo (`ollama serve`)[/yellow]")
+
+@app.command()
+def inspect(path: str = typer.Argument(".", help="Ruta a inspeccionar")):
+    """
+    Lista los archivos y muestra la estructura del código en la ruta dada.
+    """
+    reader = CodeReader(path)
+    files = reader.list_files()
+    
+    console.print(f"[bold blue]Archivos encontrados en {path}:[/bold blue]")
+    for f in files:
+        if f.endswith(".py"):
+            content = reader.read_file(f)
+            struct = get_code_structure(content)
+            console.print(f"📄 [bold]{f}[/bold] -> Clases: {struct['classes']}, Funciones: {struct['functions']}")
+        else:
+            console.print(f"📄 {f}")
 
 if __name__ == "__main__":
     app()
