@@ -10,7 +10,7 @@ from tools.parser import get_code_structure
 # Configuración inicial
 app = typer.Typer(help="Agente de Coding Local - Fase 1")
 console = Console()
-
+ 
 # Cliente para Ollama (o vLLM)
 # Por defecto Ollama corre en el puerto 11434
 client = OpenAI(
