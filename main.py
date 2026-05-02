@@ -93,7 +93,24 @@ def index_project(path: str):
     memory.save_to_disk()
     return memory
 
+from memory.graph_manager import MemoryManager
 
+@app.command()
+def analyze(file: str):
+    """
+    Analiza qué archivos se verían afectados si cambias el archivo dado.
+    """
+    memory = MemoryManager()
+    memory.load_from_disk()
+    
+    related = memory.get_related_nodes(file)
+    
+    if not related:
+        console.print(f"[yellow]No se encontraron dependencias para {file}[/yellow]")
+    else:
+        console.print(f"[bold green]Si cambias {file}, podrías afectar a:[/bold green]")
+        for item in related:
+            console.print(f"🔗 {item}")
 
 if __name__ == "__main__":
     app()

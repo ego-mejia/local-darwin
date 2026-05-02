@@ -60,3 +60,23 @@ En lugar de ver el código como una cadena de texto, el AST convierte el código
 Archivos encontrados en test:
 📄 archivo_1.py -> Clases: [], Funciones: []
 ```
+
+🧠 Fase 3: La Memoria (NetworkX & SQLite)
+Usaremos NetworkX para la estructura lógica (el mapa) y SQLite para la persistencia (para que no tenga que re-indexar todo cada vez que lo abras).
+
+¿Cómo se conectan?
+
+Nodos: Archivos, Clases y Funciones.
+
+Aristas (Edges): Relaciones como "importa a", "hereda de" o "llama a".
+
+Tarea 3.1: El Administrador de Memoria (memory/graph_manager.py)
+
+Primero, instalemos NetworkX con uv:
+
+#### para probar
+
+```
+uv run main.py analyze main.py
+
+```
