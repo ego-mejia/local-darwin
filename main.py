@@ -68,5 +68,32 @@ def inspect(path: str = typer.Argument(".", help="Ruta a inspeccionar")):
         else:
             console.print(f"📄 {f}")
 
+# Connect Parser with Graph Manager
+# Lógica conceptual para tu comando de indexación
+def index_project(path: str):
+    memory = MemoryManager()
+    reader = CodeReader(path)
+    files = reader.list_files()
+
+    for file in files:
+        if file.endswith(".py"):
+            content = reader.read_file(file)
+            structure = get_code_structure(content)
+            
+            # Registrar el archivo como nodo
+            memory.graph.add_node(file, type="file")
+            
+            # Registrar imports como relaciones
+            for imp in structure["imports"]:
+                # Aquí simplificaremos: si el import menciona otro archivo del repo
+                for target_file in files:
+                    if target_file.replace(".py", "") in imp:
+                        memory.add_relationship(file, target_file, "imports")
+    
+    memory.save_to_disk()
+    return memory
+
+
+
 if __name__ == "__main__":
     app()
