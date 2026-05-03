@@ -42,3 +42,20 @@ class MemoryManager:
                     self.graph = pickle.loads(row[0])
         except Exception:
             self.graph = nx.DiGraph()
+
+
+def get_context_for_task(self, query: str, top_n: int = 3):
+        """
+        Busca en el grafo los archivos que más se relacionan con la consulta.
+        """
+        # Por ahora, una búsqueda simple: si el nombre del archivo está en la query
+        # o si son nodos muy conectados (centralidad).
+        all_nodes = list(self.graph.nodes)
+        relevant_nodes = [node for node in all_nodes if node.split('.')[0] in query.lower()]
+        
+        # Expandimos: si encontramos un archivo, traemos sus vecinos directos
+        context_files = set(relevant_nodes)
+        for node in relevant_nodes:
+            context_files.update(self.get_related_nodes(node))
+            
+        return list(context_files)[:top_n]
