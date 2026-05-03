@@ -1,62 +1,43 @@
-# La Hoja de Ruta (Vista General)
+# Local Darwin - Agente de Coding Local 🧬
 
-## Etapa 1: El Esqueleto (CLI & Conectividad): Crear la base de Python y lograr que hable con tu modelo local (Ollama/vLLM).
+![alt text](darwin--banner.png)
 
-## Etapa 2: La Vista (File System & Parsing): Hacer que el agente pueda "leer" archivos y entender código usando ast (Abstract Syntax Trees) para alimentar el grafo.
+Local Darwin es un asistente de ingeniería de software local potenciado por modelos de lenguaje (LLMs) ejecutados en tu propia máquina mediante Ollama. A diferencia de un simple chat, este agente tiene la capacidad de indexar tu código, comprender sus relaciones y utilizar herramientas para leer, escribir o ejecutar comandos en tu terminal.
 
-## Etapa 3: La Memoria (NetworkX & SQLite): Construir el mapa de relaciones y persistirlo para que el agente no olvide cómo se conectan los archivos.
+## 🚀 Arquitectura y Capacidades Actuales
 
-## Etapa 4: Las Manos (Agente & Tool Use): Implementar la lógica donde el modelo decide: "Voy a leer este archivo, luego a ejecutar este test".
+El proyecto se ha construido en distintas fases incrementales:
 
-## Etapa 5: El Puente (VSCode Extension): Crear la interfaz para que uses todo esto sin salir de tu editor.
+1. **El Esqueleto (CLI):** Un punto de entrada modular construido con `Typer` que se conecta fluidamente con modelos locales usando compatibilidad con la API de OpenAI.
+2. **La Vista (File System & AST):** Capacidad para explorar tu directorio e interpretar tu código Python sin necesidad de leerlo línea por línea, abstrayendo clases y funciones nativamente.
+3. **La Memoria (NetworkX & SQLite):** Motor de indexación que construye un mapa lógico de cómo tus archivos dependen unos de otros y lo persiste en una base de datos local para análisis súper rápidos.
+4. **Las Manos (Tool Use & Agent Loop):** El corazón de la autonomía. El agente razona y decide dinámicamente qué herramientas ejecutar (`read_file`, `write_file`, `execute_command`) en bucles lógicos hasta resolver la tarea que le pediste.
 
-### 🛠️ Fase 1: El Esqueleto
+## ⚙️ Requisitos y Configuración
 
-El objetivo de hoy es tener un comando en tu terminal que, al ejecutarlo, le envíe un mensaje a tu LLM local y te devuelva una respuesta profesional.
+1. **Python 3+** y un manejador de entornos y paquetes como `uv` (recomendado).
+2. **Ollama** instalado y corriendo localmente (`ollama serve`).
+3. Descargar el modelo que desees utilizar (por defecto la app utiliza `gemma4`, pero puedes pasar el argumento `--model` para usar otros como `llama3`).
 
-#### Tarea 1.1: Setup del Entorno. \* Crea una carpeta para el proyecto.
+Para iniciar el proyecto:
 
-Configura un entorno virtual (recomiendo uv o poetry para manejar dependencias, pero venv está bien).
-
-Instala las librerías base: typer (para el CLI) y openai (la mayoría de los backends locales como Ollama o vLLM usan el estándar de OpenAI).
-
-#### Tarea 1.2: El CLI "Hello Agent".
-
-Crea un archivo main.py.
-
-Usa Typer para crear un comando básico de chat. Ejemplo: python main.py chat "Hola, ¿quién eres?".
-
-#### Tarea 1.3: Conexión con el Modelo Local.
-
-Asegúrate de tener Ollama (o similar) corriendo con un modelo (Gemma 2 o 4).
-
-Configura el cliente en Python para que apunte a localhost:11434.
-
-Logra que el agente responda a tu comando de la Tarea 1.2 usando el modelo local.
-
-# Test
-
-Para lograr comunicarse con el agente desde la terminal:
-
-```
-uv run main.py "Agregar aqui el prompt"
-# se corre sin utilizar el chat
+```bash
+uv venv
+uv pip install -r requirements.txt # O instala las dependencias (typer, openai, rich, networkx, etc.)
 ```
 
-# 👁️ Fase 2: La Vista (File System & Parsing)
+## 💻 Cómo Usarlo
 
-El objetivo es que el agente pueda responder a: "¿Qué funciones hay en el archivo auth.py?" sin tener que leer todo el archivo línea por línea manualmente.
+Local Darwin se usa interactuando con `main.py` desde la línea de comandos:
 
-En esta fase vamos a darle la capacidad de explorar tu sistema de archivos y, lo más importante, de entender la estructura del código sin simplemente leerlo como texto plano. Para esto usaremos AST (Abstract Syntax Trees).
+- **Modo conversacional:** `uv run main.py chat "¿Cómo optimizo esta función?"`
+- **Inspección rápida:** `uv run main.py inspect .`
+- **Indexado de dependencias:** `uv run main.py index .`
+- **Análisis de dependencias:** `uv run main.py analyze main.py`
+- **Modo Agente Autónomo:** `uv run main.py run "Crea una función en utils.py y escribe tests con pytest"`
 
-¿Qué es el AST?
+Para obtener más detalles sobre el funcionamiento interno y ejemplos precisos de cada comando, visita la documentación de los comandos del CLI (`tools/comandos_cli.md`).
 
-En lugar de ver el código como una cadena de texto, el AST convierte el código en un árbol jerárquico. Esto nos permite saber exactamente dónde empieza una función, qué argumentos recibe y qué otras librerías importa, de forma estructurada.
+---
 
-## Para probar el codigo:
-
-```
-(local-agent) (base) ➜  local-agent git:(feat/Fase-2/File-system-and-parsing) ✗ uv run main.py inspect test
-Archivos encontrados en test:
-📄 archivo_1.py -> Clases: [], Funciones: []
-```
+_El código ignora automáticamente los directorios configurados en `.darwinignore` (ej: `.venv`, `__pycache__`) para mayor eficiencia y velocidad de análisis._
